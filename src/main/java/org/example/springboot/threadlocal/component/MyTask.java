@@ -23,13 +23,18 @@ public class MyTask implements Runnable {
     @Override
     public void run() {
         MyThreadLocal.startTransaction(transactionId);
-        printText(String.format("Thread = %d TransactionId = %s", Thread.currentThread().getId(), transactionId));
         try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            printText(String.format("Thread = %d TransactionId = %s", Thread.currentThread().getId(), transactionId));
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            printText(String.format("Thread = %d Threadlocal property  %s", Thread.currentThread().getId(), MyThreadLocal.getTransactionId()));
+        } finally {
+            MyThreadLocal.endTransaction();
         }
-        printText(String.format("Thread = %d Threadlocal property  %s", Thread.currentThread().getId(), MyThreadLocal.getTransactionId()));
+
     }
 
     private void printText(String text) {
